@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Login</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='login.css') }}">
+
+    <style>
+
+        #video {
+
+            width: 140px;
+
+            height: 110px;
+
+            border-radius: 12px;
+
+            object-fit: cover;
+
+            border: 2px solid rgba(255,255,255,0.2);
+
+            background: black;
+
+            margin: 10px auto;
+
+            display: block;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <div class="form-box">
+
+        <form method="POST">
+
+            <h2>Login</h2>
+
+            <!-- ERROR -->
+
+            {% if error %}
+
+                <p style="
+                    color:red;
+                    text-align:center;
+                    margin-bottom:10px;
+                ">
+
+                    {{ error }}
+
+                </p>
+
+            {% endif %}
+
+            <!-- USERNAME -->
+
+            <div class="input-box">
+
+                <span class="icon">
+
+                    <ion-icon name="person-outline"></ion-icon>
+
+                </span>
+
+                <input
+                type="text"
+                name="username"
+                required>
+
+                <label>Username</label>
+
+            </div>
+
+            <!-- PASSWORD -->
+
+            <div class="input-box">
+
+                <span class="icon">
+
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+
+                </span>
+
+                <input
+                type="password"
+                name="password"
+                required>
+
+                <label>Password</label>
+
+            </div>
+
+            <!-- CAMERA -->
+
+            <video
+            id="video"
+            autoplay
+            playsinline>
+
+            </video>
+
+            <canvas
+            id="canvas"
+            style="display:none;">
+
+            </canvas>
+
+            <!-- FACE IMAGE -->
+
+            <input
+            type="hidden"
+            name="face_image"
+            id="face_image">
+
+            <!-- FACE BUTTON -->
+
+            <button
+            type="button"
+            onclick="captureFace()">
+
+                Face Verification
+
+            </button>
+
+            <br><br>
+
+            <!-- LOGIN BUTTON -->
+
+            <button type="submit">
+
+                Login
+
+            </button>
+
+            <!-- REGISTER -->
+
+            <div class="register-link">
+
+                <p>
+
+                    Don't have an account?
+
+                    <a href="/register">
+
+                        Register
+
+                    </a>
+
+                </p>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- CAMERA SCRIPT -->
+
+<script>
+
+const video = document.getElementById("video");
+
+let faceCaptured = false;
+
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+    video.srcObject = stream;
+    video.onloadedmetadata = () => video.play();
+})
+.catch(error => {
+    alert("Camera access denied");
+    console.log(error);
+});
+
+// ✅ VALIDATION BEFORE LOGIN
+function validateFace() {
+
+    const face = document.getElementById("face_image").value;
+
+    if (!face || face.length < 1000 || !faceCaptured) {
+        alert("Please capture your face first!");
+        return false;
+    }
+
+    return true;
+}
+
+// ✅ FIXED FACE CAPTURE
+function captureFace() {
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+        alert("Camera not ready yet!");
+        return;
+    }
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = canvas.toDataURL("image/jpeg", 0.9);
+
+    document.getElementById("face_image").value = imageData;
+
+    faceCaptured = true;
+
+    alert("Face captured successfully");
+}
+
+</script>
+<!-- IONICONS -->
+
+<script
+type="module"
+src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js">
+
+</script>
+
+<script
+nomodule
+src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js">
+
+</script>
+
+</body>
+
+</html>
+

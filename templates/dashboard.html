@@ -1,0 +1,581 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Metaverse Dashboard</title>
+
+    <style>
+
+     * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle at top, #0b1220, #050814);
+        color: #ffffff;
+    }
+
+    /* SUBTLE GRID BACKGROUND */
+
+    body::before {
+
+        content: "";
+
+        position: fixed;
+
+        width: 100%;
+
+        height: 100%;
+
+        background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+
+        background-size: 60px 60px;
+
+        z-index: -1;
+    }
+
+    /* MAIN CARD */
+
+    .card {
+
+        width: 520px;
+
+        padding: 30px;
+
+        border-radius: 18px;
+
+        background: rgba(255, 255, 255, 0.06);
+
+        backdrop-filter: blur(18px);
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+
+        text-align: center;
+    }
+
+    /* TITLE */
+
+    h2 {
+
+        margin-bottom: 18px;
+
+        font-size: 26px;
+
+        font-weight: 700;
+
+        letter-spacing: 1px;
+
+        background: linear-gradient(90deg, #00d4ff, #00ffcc);
+
+        -webkit-background-clip: text;
+
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* INFO BOXES */
+
+    .info {
+
+        margin-top: 12px;
+
+        padding: 12px 14px;
+
+        border-radius: 12px;
+
+        background: rgba(255,255,255,0.05);
+
+        border: 1px solid rgba(255,255,255,0.08);
+
+        font-size: 14px;
+
+        text-align: left;
+
+        transition: 0.3s;
+    }
+
+    .info:hover {
+
+        transform: translateY(-2px);
+
+        background: rgba(255,255,255,0.08);
+    }
+
+    /* SUCCESS TEXT */
+
+    .success {
+
+        color: #00ff99;
+
+        font-weight: bold;
+    }
+
+    /* BUTTON */
+
+    .btn {
+
+        width: 100%;
+
+        padding: 14px;
+
+        margin-top: 18px;
+
+        border: none;
+
+        border-radius: 12px;
+
+        cursor: pointer;
+
+        font-size: 15px;
+
+        font-weight: 600;
+
+        color: #001018;
+
+        background: linear-gradient(90deg, #00d4ff, #00ffcc);
+
+        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.25);
+
+        transition: 0.3s ease;
+    }
+
+    .btn:hover {
+
+        transform: translateY(-3px);
+
+        box-shadow: 0 15px 40px rgba(0, 212, 255, 0.35);
+    }
+
+    /* LOGOUT */
+
+    .logout {
+
+        display: inline-block;
+
+        margin-top: 18px;
+
+        color: #ff4d4d;
+
+        font-weight: bold;
+
+        text-decoration: none;
+
+        transition: 0.3s;
+    }
+
+    .logout:hover {
+
+        color: #ff1a1a;
+    }
+
+    /* TOKEN BOX */
+
+    .token-box {
+
+        margin-top: 18px;
+
+        padding: 12px;
+
+        border-radius: 12px;
+
+        background: rgba(0,0,0,0.4);
+
+        border: 1px solid rgba(255,255,255,0.1);
+
+        font-size: 12px;
+
+        word-break: break-all;
+
+        text-align: left;
+    }
+
+    /* MENU BUTTON */
+
+    .menu-btn {
+
+        position: fixed;
+
+        top: 18px;
+
+        right: 18px;
+
+        width: 45px;
+
+        height: 45px;
+
+        border-radius: 12px;
+
+        border: 1px solid rgba(255,255,255,0.1);
+
+        background: rgba(255,255,255,0.06);
+
+        color: white;
+
+        font-size: 22px;
+
+        cursor: pointer;
+
+        backdrop-filter: blur(10px);
+
+        transition: 0.3s;
+    }
+
+    .menu-btn:hover {
+
+        background: rgba(0, 212, 255, 0.15);
+
+        transform: scale(1.05);
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+
+        position: fixed;
+
+        top: 0;
+
+        right: -340px;
+
+        width: 320px;
+
+        height: 100%;
+
+        background: rgba(10, 15, 25, 0.95);
+
+        backdrop-filter: blur(18px);
+
+        border-left: 1px solid rgba(255,255,255,0.08);
+
+        padding: 20px;
+
+        transition: 0.35s ease;
+
+        z-index: 1000;
+
+        overflow-y: auto;
+    }
+
+    .sidebar.active {
+
+        right: 0;
+    }
+
+    /* CLOSE BUTTON */
+
+    .close-btn {
+
+        background: rgba(255, 70, 70, 0.2);
+
+        border: 1px solid rgba(255,70,70,0.4);
+
+        color: white;
+
+        padding: 6px 10px;
+
+        border-radius: 8px;
+
+        cursor: pointer;
+
+        float: right;
+    }
+
+    /* OVERLAY */
+
+    .overlay {
+
+        position: fixed;
+
+        width: 100%;
+
+        height: 100%;
+
+        background: rgba(0,0,0,0.6);
+
+        display: none;
+
+        z-index: 999;
+    }
+
+    .overlay.active {
+
+        display: block;
+    }
+
+    /* HISTORY BOX */
+
+    .history-box {
+
+        margin-top: 14px;
+
+        padding: 12px;
+
+        border-radius: 12px;
+
+        background: rgba(255,255,255,0.04);
+
+        border-left: 3px solid #00ffcc;
+
+        font-size: 13px;
+
+        transition: 0.3s;
+    }
+
+    .history-box:hover {
+
+        transform: scale(1.02);
+    }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- OVERLAY -->
+
+<div
+id="overlay"
+class="overlay"
+onclick="closeMenu()">
+
+</div>
+
+<!-- MENU BUTTON -->
+
+<button
+class="menu-btn"
+onclick="openMenu()">
+
+☰
+
+</button>
+
+<!-- MAIN CARD -->
+
+<div class="card">
+
+    <h2>AI METAVERSE</h2>
+
+    <div class="info">
+        👤 Welcome:
+        <b>{{ user }}</b>
+    </div>
+
+    <div class="info success">
+        ✅ Face Verified
+    </div>
+
+    <div class="info">
+        ⏰ Login Time:
+        <b>{{ login_time }}</b>
+    </div>
+
+    <div class="info">
+        🌐 Device IP:
+        <b>{{ ip_address }}</b>
+    </div>
+
+    <div class="info">
+        📍 Login Location:
+        <b>{{ location }}</b>
+    </div>
+
+    <div class="info">
+        💻 Device:
+        <b>{{ device }}</b>
+    </div>
+
+    <div class="info">
+        🌍 Browser:
+        <b>{{ browser }}</b>
+    </div>
+
+    <div class="info">
+        🖥️ OS:
+        <b>{{ os_name }}</b>
+    </div>
+
+    <div class="info">
+        🔢 Total Logins:
+        <b>{{ login_count }}</b>
+    </div>
+
+    <div class="info">
+        🕒 Current Time:
+        <span id="clock"></span>
+    </div>
+
+    <!-- UNITY BUTTON -->
+
+    <button
+    class="btn"
+    onclick="openUnity()">
+
+        Enter Metaverse
+
+    </button>
+
+    <!-- TOKEN -->
+
+    <div class="token-box">
+
+        <b>Session Token</b>
+
+        <br><br>
+
+        {{ token }}
+
+    </div>
+
+    <!-- LOGOUT -->
+
+    <a
+    href="/logout"
+    class="logout">
+
+        Logout
+
+    </a>
+
+</div>
+
+<!-- SIDEBAR -->
+
+<div
+id="sidebar"
+class="sidebar">
+
+    <button
+    class="close-btn"
+    onclick="closeMenu()">
+
+        X
+
+    </button>
+
+    <h2>User Login History</h2>
+
+    <!-- CLEAR HISTORY -->
+
+    <a
+    href="/clear_history"
+    style="
+    display:inline-block;
+    margin-top:10px;
+    margin-bottom:15px;
+    padding:10px 15px;
+    background:red;
+    color:white;
+    text-decoration:none;
+    border-radius:10px;
+    font-weight:bold;
+    ">
+
+        Clear History
+
+    </a>
+
+    <!-- HISTORY -->
+
+    {% for item in login_history %}
+
+    <div class="history-box">
+
+        👤 <b>{{ user }}</b>
+
+        <br><br>
+
+        🌐 {{ item.ip }}
+
+        <br><br>
+
+        📍 {{ item.location }}
+
+        <br><br>
+
+        💻 {{ item.device }}
+
+        <br><br>
+
+        🌍 {{ item.browser }}
+
+        <br><br>
+
+        🖥️ {{ item.os }}
+
+        <br><br>
+
+        ⏰ {{ item.time }}
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<script>
+
+async function openUnity() {
+
+    let user = "{{ user }}";
+    let token = "{{ token }}";
+
+    if (!token || token === "N/A") {
+        alert("Session missing. Please login again.");
+        window.location.href = "/login";
+        return;
+    }
+
+    try {
+        // 🔥 SERVER VALIDATION BEFORE UNITY
+        let res = await fetch("/api/verify_token", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: user,
+                token: token
+            })
+        });
+
+        let data = await res.json();
+
+        if (data.status !== "success") {
+            alert("Session expired or invalid. Please login again.");
+            window.location.href = "/login";
+            return;
+        }
+
+        // ✅ ONLY OPEN UNITY IF VALID
+        window.location.href =
+            "unityapp://open?user=" +
+            encodeURIComponent(user) +
+            "&token=" +
+            encodeURIComponent(token);
+
+    } catch (err) {
+        alert("Network error. Try again.");
+        console.log(err);
+    }
+}
+
+</script>
+
+</body>
+
+</html>
